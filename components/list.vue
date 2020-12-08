@@ -2,7 +2,13 @@
 	<v-layout column justify-center align-center>
 		<v-card width="800" class="mx-auto">
 			<v-toolbar>
-				<v-toolbar-title>Musiques</v-toolbar-title>
+				<v-toolbar-title>Artistes</v-toolbar-title>
+
+				<v-radio-group v-model="sortMethod" row>
+					<v-radio label="Artistes" :color="getColors[1]" value="0"></v-radio>
+					<v-radio label="Dates" :color="getColors[1]" value="1"></v-radio>
+					<v-radio label="Aléatoire" :color="getColors[1]" value="2"></v-radio>
+				</v-radio-group>
 
 				<v-spacer></v-spacer>
 			</v-toolbar>
@@ -31,22 +37,28 @@
 </template>
 
 <script>
-import { mapMutations } from 'vuex';
+import { mapMutations, mapGetters } from 'vuex';
 
 export default {
 	data: () => ({
 		list: [],
-		sortMethod: 2
+		sortMethod: '0'
 	}),
 
 	async fetch() {
 		this.list = await this.$axios.$get('http://localhost:3000/musics');
 		this.genPlaylist();
+		this.$store.commit('musics/setMusic', { ...this.getPlaylist[0], skip: true });
 	},
 
 	computed: {
-		colors() {
-			return this.$store.state.colors.colors;
+		...mapGetters('colors', ['getColors']),
+		...mapGetters('musics', ['getPlaylist'])
+	},
+
+	watch: {
+		sortMethod() {
+			this.genPlaylist();
 		}
 	},
 
@@ -55,13 +67,13 @@ export default {
 			let playlist = [];
 
 			switch (this.sortMethod) {
-				case 0:
+				case '0':
 					for (const artist in this.list) playlist.push(...this.list[artist]);
 					break;
-				case 1:
+				case '1':
 					// date
 					break;
-				case 2:
+				case '2':
 					for (const artist in this.list) playlist.push(...this.list[artist]);
 					playlist = playlist
 						.map(a => [Math.random(), a])
@@ -74,7 +86,10 @@ export default {
 		},
 
 		select(music) {
-			this.$root.$emit('changeMusic', music);
+			this.genPlaylist();
+
+			this.$store.commit('musics/setMusic', music);
+			this.$store.commit('musics/setIndex', this.getPlaylist.indexOf(music));
 		}
 	}
 };

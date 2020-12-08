@@ -1,20 +1,29 @@
-export const state = () => ({ playlist: [], index: 0 });
+export const state = () => ({ playlist: [], index: 0, music: null });
+
+export const getters = {
+	getPlaylist: state => {
+		return state.playlist;
+	},
+
+	getIndex: state => {
+		return state.index;
+	},
+
+	getMusic: state => {
+		return state.music;
+	}
+};
 
 export const mutations = {
 	setPlaylist(state, playlist) {
-		state.index = 0;
 		state.playlist = playlist;
 	},
 
 	setIndex(state, index) {
 		state.index = index;
+	},
+
+	setMusic(state, music) {
+		state.music = music;
 	}
 };
-
-// export const actions = {
-// 	async request({ commit }) {
-// 		if (state.list !== null) return state.list;
-
-// 		commit('request');
-// 	}
-// };

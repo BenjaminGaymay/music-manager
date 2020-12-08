@@ -3,7 +3,7 @@
 		<audio
 			v-show="null"
 			ref="player"
-			:src="musicSrc"
+			:src="getMusic ? getMusic.src : ''"
 			v-on:ended="nextTrack({ skip: false })"
 			v-on:play="toggle(true)"
 			v-on:pause="toggle(false)"
@@ -11,62 +11,96 @@
 			controls
 		></audio>
 
-		<v-card v-if="musicSrc" class="mx-auto" max-width="300px">
-			<v-img height="300px" width="300px" :src="music.img"> </v-img>
+		<v-card class="mx-auto" max-width="300px">
+			<v-img height="300px" width="300px" :src="getMusic ? getMusic.img : '/img/default.png'">
+				<v-tooltip v-model="showTooltip" right>
+					<template v-slot:activator="{ on, attrs }">
+						<v-btn
+							fab
+							x-small
+							id="share"
+							:color="getColors[1]"
+							@click="share"
+							v-bind="attrs"
+							v-on="showTooltip ? on : null"
+						>
+							<font-awesome-icon icon="share-alt" />
+						</v-btn>
+					</template>
+					<span>Copié dans le presse-papier</span>
+				</v-tooltip>
+			</v-img>
 
-			<v-card-title>{{ music.title }}</v-card-title>
-			<v-card-subtitle>{{ music.artist }}</v-card-subtitle>
+			<v-card-title>{{ getMusic ? getMusic.title : '' }}</v-card-title>
+			<v-card-subtitle>{{ getMusic ? getMusic.artist : '' }}</v-card-subtitle>
 
-			<v-sheet class="progress" v-bind:style="{ width: progression + '%' }"></v-sheet>
+			<div class="progress-container" @click="setProgression">
+				<v-sheet class="progress" v-bind:style="{ width: progression + '%' }"></v-sheet>
+			</div>
 
-			<v-card-actions>
-				<v-btn v-on:click="previousTrack" text> ⏪︎ </v-btn>
-				<v-btn v-on:click="playPause" text> {{ playIcon }} </v-btn>
-				<v-btn v-on:click="nextTrack({ skip: true })" text> ⏩︎ </v-btn>
+			<v-card-actions style="position: relative">
+				<v-btn v-on:click="previousTrack" text> <font-awesome-icon icon="backward" /> </v-btn>
+				<v-btn v-on:click="playPause" text>
+					<font-awesome-icon v-if="playing" icon="pause" /> <font-awesome-icon v-else icon="play" />
+				</v-btn>
+
+				<v-btn v-on:click="nextTrack({ skip: true })" text>
+					<font-awesome-icon icon="forward" />
+				</v-btn>
+
+				<!-- <v-btn v-on:click="showVolume = !showVolume" text>
+					<font-awesome-icon v-if="!showVolume && volume > 50" icon="volume-up" />
+					<font-awesome-icon v-if="!showVolume && volume <= 50 && volume > 0" icon="volume-down" />
+					<font-awesome-icon v-if="!showVolume && volume === 0" icon="volume-mute" />
+
+					<v-slider
+						v-if="showVolume"
+						v-model="volume"
+						v-on:change="setVolume"
+						color="var(--mainColor)"
+						class="volume"
+						min="0"
+						max="100"
+						vertical
+					></v-slider>
+				</v-btn> -->
+				<v-btn v-on:click="setVolume(volume === 0 ? 10 : volume === 10 ? 50 : 0)" text>
+					<font-awesome-icon v-if="volume === 50" icon="volume-up" />
+					<font-awesome-icon v-if="volume === 10" icon="volume-down" />
+					<font-awesome-icon v-if="volume === 0" icon="volume-mute" />
+				</v-btn>
 			</v-card-actions>
 		</v-card>
 	</div>
 </template>
 
 <script>
+import { mapGetters } from 'vuex';
+
 export default {
 	data() {
 		return {
-			playlist: this.$store.state.musics.playlist,
-			index: this.$store.state.musics.index,
-			musicSrc: null,
 			playing: false,
-			progression: 0
+			progression: 0,
+			volume: 10,
+			showVolume: false,
+			showTooltip: false
 		};
 	},
 
-	created() {
-		this.$root.$on('changeMusic', newMusic => {
-			this.index = this.playlist.indexOf(newMusic);
-			this.$store.commit('musics/setIndex', this.index);
-			this.$root.$emit('trackCover', newMusic.img);
-
-			if (!this.$refs.player.paused) this.$nextTick(() => this.$refs.player.play());
-		});
-	},
-
 	mounted() {
-		this.$refs.player.volume = 0.05;
-		this.musicSrc = this.playlist[this.index].src;
-
-		this.$root.$emit('trackCover', this.playlist[this.index].img);
+		this.setVolume();
 	},
 
 	computed: {
-		music() {
-			this.musicSrc = this.playlist[this.index].src;
+		...mapGetters('musics', ['getPlaylist', 'getIndex', 'getMusic']),
+		...mapGetters('colors', ['getColors'])
+	},
 
-			this.$root.$emit('trackCover', this.playlist[this.index].img);
-			return this.playlist[this.index];
-		},
-
-		playIcon() {
-			return this.playing ? '⏸' : '▶️';
+	watch: {
+		getMusic() {
+			if (!this.getMusic.skip || !this.$refs.player.paused) this.$nextTick(() => this.$refs.player.play());
+			if (!this.getMusic.skip) this.playing = true;
 		}
 	},
 
@@ -81,37 +115,95 @@ export default {
 		},
 
 		nextTrack({ skip }) {
-			this.progression = 0;
-			this.index = (this.index + 1) % this.playlist.length;
-			this.$store.commit('musics/setIndex', this.index);
+			const index = (this.getIndex + 1) % this.getPlaylist.length;
 
-			if (!skip || !this.$refs.player.paused) this.$nextTick(() => this.$refs.player.play());
-			if (!skip) this.playing = true;
+			this.progression = 0;
+			this.$store.commit('musics/setIndex', index);
+			this.$store.commit('musics/setMusic', { ...this.getPlaylist[index], skip });
 		},
 
 		previousTrack() {
-			this.progression = 0;
-			this.index = this.index - 1 >= 0 ? this.index - 1 : this.playlist.length - 1;
-			this.$store.commit('musics/setIndex', this.index);
+			const index = this.getIndex - 1 >= 0 ? this.getIndex - 1 : this.getPlaylist.length - 1;
 
-			if (!this.$refs.player.paused) this.$nextTick(() => this.$refs.player.play());
+			this.progression = 0;
+			this.$store.commit('musics/setIndex', index);
+			this.$store.commit('musics/setMusic', { ...this.getPlaylist[index], skip: true });
 		},
 
 		updateProgression() {
-			this.progression = (this.$refs.player.currentTime / this.$refs.player.duration) * 100;
+			try {
+				this.progression = (this.$refs.player.currentTime / this.$refs.player.duration) * 100;
+			} catch (e) {
+				console.log(e);
+			}
+		},
+
+		setProgression(event) {
+			const offsetWidth = event.srcElement.classList.contains('v-sheet')
+				? event.srcElement.offsetParent.offsetWidth
+				: event.srcElement.offsetWidth;
+
+			const position = (event.offsetX / offsetWidth) * 100;
+
+			this.$refs.player.currentTime = (position / 100) * this.$refs.player.duration;
+		},
+
+		setVolume(volume) {
+			if (volume !== undefined) this.volume = volume;
+			this.$refs.player.volume = this.volume / 100;
+		},
+
+		share() {
+			const url = `${window.location.host}/?artist=${this.getMusic.artist}&title=${this.getMusic.title}`;
+
+			navigator.clipboard.writeText(url);
+			this.showTooltip = true;
 		}
 	}
 };
 </script>
 
-<style scoped>
-.progress {
-	width: 0;
-	height: 0.5rem;
-	background-color: var(--mainColor);
+<style lang="scss" scoped>
+.progress-container {
+	position: relative;
+	height: 1rem;
+	cursor: pointer;
+
+	.progress {
+		position: absolute;
+		top: calc(50% - 0.25rem);
+
+		width: 0;
+		height: 0.5rem;
+		background-color: var(--mainColor);
+	}
+}
+
+.volume {
+	position: absolute;
+	margin-top: -1.5rem;
+	// bottom: 0;
+
+	// transform: translate(10%);
+	// right: 2rem;
 }
 
 .v-btn {
-	color: var(--mainColor);
+	&:not(#share) {
+		color: var(--mainColor);
+	}
+
+	&#share {
+		position: absolute;
+		top: 5px;
+		right: 5px;
+		background-color: var(--mainColor);
+	}
+}
+</style>
+
+<style scoped>
+.volume >>> .v-slider {
+	min-height: 4rem;
 }
 </style>

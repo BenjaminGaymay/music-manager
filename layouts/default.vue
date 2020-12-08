@@ -2,33 +2,61 @@
 	<v-app dark>
 		<style>
 			:root {
-				--mainColor: {{ colors[0]}};
+				--mainColor: {{ getColors[0]}};
+				--secondaryColor: {{ getColors[1]}};
 			}
 		</style>
 
 		<img id="bg" :src="src" />
+
+		<!-- <div>
+			<div class="rect"></div>
+			<div class="rect"></div>
+			<div class="rect"></div>
+			<div class="rect"></div>
+			<div class="rect"></div>
+			<div class="rect"></div>
+		</div> -->
+
 		<nuxt keep-alive />
 	</v-app>
 </template>
 
 <script>
 import * as Vibrant from 'node-vibrant';
+import { mapGetters } from 'vuex';
 
 export default {
 	data: () => ({
-		src: '/img/default.png.blur',
-		colors: ['#ff00ff']
+		src: '/img/default.png.blur'
 	}),
 
-	created() {
-		this.$root.$on('trackCover', imgPath => {
-			Vibrant.from(imgPath).getPalette((err, palette) => {
-				this.$store.commit('colors/setColors', [palette.Vibrant.hex]);
-				this.colors = [palette.Vibrant.hex];
-			});
+	computed: {
+		...mapGetters('musics', ['getMusic']),
+		...mapGetters('colors', ['getColors'])
+	},
 
-			this.src = `${imgPath}.blur`;
-		});
+	watch: {
+		getMusic(music) {
+			this.src = `${music.img}.blur`;
+
+			Vibrant.from(music.img).getPalette((err, palette) => {
+				this.$store.commit('colors/setColors', [palette.Vibrant.hex, palette.DarkVibrant.hex]);
+
+				// document.getElementsByClassName('rect')[0].style.backgroundColor = palette.Vibrant.hex;
+				// document.getElementsByClassName('rect')[0].innerHTML = 'palette.Vibrant.hex';
+				// document.getElementsByClassName('rect')[1].style.backgroundColor = palette.Muted.hex;
+				// document.getElementsByClassName('rect')[1].innerHTML = 'palette.Muted.hex';
+				// document.getElementsByClassName('rect')[2].style.backgroundColor = palette.DarkVibrant.hex;
+				// document.getElementsByClassName('rect')[2].innerHTML = 'palette.DarkVibrant.hex';
+				// document.getElementsByClassName('rect')[3].style.backgroundColor = palette.DarkMuted.hex;
+				// document.getElementsByClassName('rect')[3].innerHTML = 'palette.DarkMuted.hex';
+				// document.getElementsByClassName('rect')[4].style.backgroundColor = palette.LightVibrant.hex;
+				// document.getElementsByClassName('rect')[4].innerHTML = 'palette.LightVibrant.hex';
+				// document.getElementsByClassName('rect')[5].style.backgroundColor = palette.LightMuted.hex;
+				// document.getElementsByClassName('rect')[5].innerHTML = 'palette.LightMuted.hex';
+			});
+		}
 	}
 };
 </script>
@@ -41,4 +69,9 @@ export default {
 	width: 100%;
 	height: 100%;
 }
+
+/* .rect {
+	height: 30px;
+	z-index: -1;
+} */
 </style>

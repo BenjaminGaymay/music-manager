@@ -8,8 +8,8 @@ const listMusics = directory => {
 
 		musics = musics.filter(m => m.endsWith('.mp3'));
 		a[v] = musics.map(e => ({
-			src: `musics/${v}/${e}`,
-			img: `musics/${v}/${e}`.replace(/\.mp3$/, '.jpg'),
+			src: `musics/${v}/${e}`.replace('%', '%25'),
+			img: `musics/${v}/${e}`.replace(/\.mp3$/, '.jpg').replace('%', '%25'),
 			artist: v,
 			title: e.match(/^.+ - (.+)\.mp3$/)[1]
 		}));
