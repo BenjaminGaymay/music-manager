@@ -1,7 +1,7 @@
 <template>
 	<v-layout column justify-center align-center>
 		<player class="player" />
-		<list />
+		<list class="list" />
 	</v-layout>
 </template>
 
@@ -48,7 +48,6 @@ export default {
 
 	mounted() {
 		if (this.$route.query.artist && this.$route.query.title) {
-			console.log(this.$route.query.title);
 			this.findTrackInPlaylist(this.$route.query.title, this.$route.query.artist);
 		}
 	},
@@ -70,7 +69,9 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.player {
+.player,
+.list {
 	margin-top: 1rem;
+	margin-bottom: 1rem;
 }
 </style>

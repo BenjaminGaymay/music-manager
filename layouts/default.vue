@@ -1,13 +1,13 @@
 <template>
 	<v-app dark>
-		<style>
+		<style v-if="getMusic">
 			:root {
 				--mainColor: {{ getColors[0]}};
 				--secondaryColor: {{ getColors[1]}};
 			}
 		</style>
 
-		<img id="bg" :src="src" />
+		<img id="bg" v-if="getMusic" :src="getMusic.blur" />
 
 		<!-- <div>
 			<div class="rect"></div>
@@ -27,10 +27,6 @@ import * as Vibrant from 'node-vibrant';
 import { mapGetters } from 'vuex';
 
 export default {
-	data: () => ({
-		src: '/img/default.png.blur'
-	}),
-
 	computed: {
 		...mapGetters('musics', ['getMusic']),
 		...mapGetters('colors', ['getColors'])
@@ -38,8 +34,6 @@ export default {
 
 	watch: {
 		getMusic(music) {
-			this.src = `${music.img}.blur`;
-
 			Vibrant.from(music.img).getPalette((err, palette) => {
 				this.$store.commit('colors/setColors', [palette.Vibrant.hex, palette.DarkVibrant.hex]);
 

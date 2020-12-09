@@ -1,4 +1,4 @@
-export const state = () => ({ colors: ['#ff00ff', '#00ffff'] });
+export const state = () => ({ colors: ['#2E2E2E', '#444444'] });
 
 export const getters = {
 	getColors: state => {

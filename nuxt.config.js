@@ -22,9 +22,7 @@ module.exports = {
 	/*
 	 ** Global CSS
 	 */
-	css: [
-		'@fortawesome/fontawesome-svg-core/styles.css'
-	],
+	css: ['@fortawesome/fontawesome-svg-core/styles.css'],
 	/*
 	 ** Plugins to load before mounting the App
 	 */
@@ -47,7 +45,7 @@ module.exports = {
 			dark: true,
 			themes: {
 				dark: {
-					primary: '#A31FA3',
+					primary: '#1E1E1E',
 					accent: '#FF00FF',
 					secondary: '#179EA8',
 					success: '#42F849',
