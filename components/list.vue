@@ -1,7 +1,7 @@
 <template>
 	<v-container column justify-center align-center>
 		<v-card max-width="800px" class="mx-auto" min-height="300px">
-			<v-toolbar>
+			<v-toolbar :color="getColors[0]">
 				<v-toolbar-title :class="sortMethod === null ? 'selected' : ''" @click="sortMethod = null">
 					Aléatoire
 				</v-toolbar-title>
@@ -38,7 +38,7 @@
 				@page-count="pageCount = $event"
 			>
 				<template v-if="sortMethod !== null" v-slot:group.header="{ items, isOpen }">
-					<th colspan="100%" @click="toggle(items[0])">
+					<th :style="{ backgroundColor: getColors[1] }" colspan="100%" @click="toggle(items[0])">
 						<v-btn text icon small color="white">
 							<v-icon>{{
 								(sortMethod === 'artist' && items[0].artist === selectedGroup.key) ||
@@ -57,6 +57,11 @@
 					<tr
 						v-if="!selectedGroup.group || props.item[selectedGroup.group] === selectedGroup.key"
 						@click="select(props.item)"
+						:style="
+							props.item.title === getMusic.title && props.item.artist === getMusic.artist
+								? { backgroundColor: getColors[1] }
+								: {}
+						"
 						:class="
 							props.item.title === getMusic.title && props.item.artist === getMusic.artist
 								? 'v-data-table__selected'
@@ -72,11 +77,18 @@
 						<td>{{ props.item.title }} - {{ props.item.artist }}</td>
 
 						<td>
-							{{
-								props.item.title === getMusic.title && props.item.artist === getMusic.artist
-									? 'playing'
-									: ''
-							}}
+							<div style="min-width: 40px; width: 40px">
+								<v-img
+									v-if="
+										isPlaying &&
+											props.item.title === getMusic.title &&
+											props.item.artist === getMusic.artist
+									"
+									max-height="30%"
+									width="30px"
+									src="img/playing.svg"
+								></v-img>
+							</div>
 						</td>
 					</tr>
 				</template>
@@ -118,7 +130,7 @@ export default {
 
 	computed: {
 		...mapGetters('colors', ['getColors']),
-		...mapGetters('musics', ['getPlaylist', 'getMusic', 'getIndex'])
+		...mapGetters('musics', ['getPlaylist', 'getMusic', 'getIndex', 'isPlaying'])
 	},
 
 	watch: {
@@ -137,16 +149,23 @@ export default {
 			this.page = Math.ceil((index + 1) / this.itemsPerPage);
 
 			if (this.sortMethod === 'artist') this.selectedGroup = { group: 'artist', key: this.getMusic.artist };
-			else if (this.sortMethod === 'date') this.selectedGroup = { group: 'date', key: this.getMusic.date };
+			else if (this.sortMethod === 'date') {
+				this.selectedGroup = { group: 'date', key: this.getMusic.date };
+				this.page = Math.ceil((this.playlist.length - index + 1) / this.itemsPerPage);
+			}
 		},
 
 		filter(value) {
-			value = value.toLowerCase();
-			const length = this.playlist.filter(
-				e => e.title.toLowerCase().includes(value) || e.artist.toLowerCase().includes(value)
-			).length;
+			if (value) {
+				value = value.toLowerCase();
+				const length = this.playlist.filter(
+					e => e.title.toLowerCase().includes(value) || e.artist.toLowerCase().includes(value)
+				).length;
 
-			this.page = 1;
+				this.page = 1;
+			} else {
+				this.page = Math.ceil((this.getIndex + 1) / this.itemsPerPage);
+			}
 		}
 	},
 
@@ -197,7 +216,7 @@ export default {
 		},
 
 		customSort(items, index, isDesc) {
-			if (this.sortMethod === 'date') items.sort((a, b) => a.timestamp - b.timestamp);
+			if (this.sortMethod === 'date') items.sort((a, b) => b.timestamp - a.timestamp);
 			return items;
 		}
 	}
@@ -206,7 +225,6 @@ export default {
 
 <style scoped lang="scss">
 .v-toolbar {
-	background-color: var(--mainColor) !important;
 	user-select: none;
 	width: 100%;
 
@@ -242,16 +260,7 @@ export default {
 	min-height: 300px;
 }
 
-.v-list-item--link:before {
-	background-color: var(--mainColor) !important;
-}
-
-.theme--dark.v-data-table .v-row-group__header,
-.theme--dark.v-data-table .v-row-group__summary {
-	background-color: var(--secondaryColor) !important;
-}
-
 .v-pagination__navigation {
-	background-color: var(--mainColor) !important;
+	// background-color: var(--mainColor) !important;
 }
 </style>

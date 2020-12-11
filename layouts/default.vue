@@ -1,14 +1,14 @@
 <template>
-	<v-app dark>
-		<style v-if="getMusic">
+	<v-app :style="background" dark>
+		<!-- <style>
 			:root {
 				--mainColor: {{ getColors[0] }};
 				--secondaryColor: {{ getColors[1] }};
 
-				background-image: url("{{ getMusic ? getMusic.blur : 'musiques/img/default.png.blur' }}");
 				background-size: 100% 100%;
 			}
-		</style>
+		</style> -->
+		<!-- background-image: url("{{ getMusic ? getMusic.blur : 'musiques/img/default.png.blur' }}"); -->
 
 		<!-- <img id="bg" v-if="getMusic" :src="getMusic.blur" /> -->
 
@@ -31,12 +31,32 @@ import { mapGetters } from 'vuex';
 
 export default {
 	computed: {
-		...mapGetters('musics', ['getMusic']),
-		...mapGetters('colors', ['getColors'])
+		...mapGetters('musics', ['getMusic'])
+	},
+
+	data() {
+		return {
+			background: {
+				backgroundSize: '100% 100%',
+				backgroundImage: `url('/musiques/img/default.png.blur')`
+			}
+		};
+	},
+
+	mounted() {
+		this.backgroundAndColors(this.getMusic);
 	},
 
 	watch: {
 		getMusic(music) {
+			this.backgroundAndColors(music);
+		}
+	},
+
+	methods: {
+		backgroundAndColors(music) {
+			this.background.backgroundImage = `url('${music.blur}')`;
+
 			Vibrant.from(music.img).getPalette((err, palette) => {
 				this.$store.commit('colors/setColors', [palette.Vibrant.hex, palette.DarkVibrant.hex]);
 
@@ -59,18 +79,6 @@ export default {
 </script>
 
 <style scoped>
-.v-application {
-	background-color: rgba(0, 0, 0, 0) !important;
-}
-
-#bg {
-	position: absolute;
-	top: 0;
-	left: 0;
-	width: 100%;
-	height: 100%;
-}
-
 /* .rect {
 	height: 30px;
 	z-index: -1;

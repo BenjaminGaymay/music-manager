@@ -1,4 +1,4 @@
-export const state = () => ({ playlist: [], index: 0, music: null });
+export const state = () => ({ playlist: [], index: 0, music: null, playing: false });
 
 export const getters = {
 	getPlaylist: state => {
@@ -11,6 +11,10 @@ export const getters = {
 
 	getMusic: state => {
 		return state.music;
+	},
+
+	isPlaying: state => {
+		return state.playing;
 	}
 };
 
@@ -34,5 +38,9 @@ export const mutations = {
 				break;
 			}
 		}
+	},
+
+	toggle(state, playing) {
+		state.playing = playing;
 	}
 };

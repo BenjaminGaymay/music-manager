@@ -12,7 +12,7 @@
 		></audio>
 
 		<v-card class="mx-auto" max-width="300px">
-			<v-img height="300px" width="300px" :src="getMusic ? getMusic.img : '/img/default.png'">
+			<v-img height="300px" width="300px" :src="getMusic ? getMusic.img : 'musiques/img/default.png'">
 				<v-tooltip v-model="showTooltip" right>
 					<template v-slot:activator="{ on, attrs }">
 						<v-btn
@@ -35,16 +35,21 @@
 			<v-card-subtitle>{{ getMusic ? getMusic.artist : '' }}</v-card-subtitle>
 
 			<div class="progress-container" @click="setProgression">
-				<v-sheet class="progress" v-bind:style="{ width: progression + '%' }"></v-sheet>
+				<v-sheet
+					class="progress"
+					v-bind:style="{ width: progression + '%', backgroundColor: getColors[0] }"
+				></v-sheet>
 			</div>
 
 			<v-card-actions style="position: relative">
-				<v-btn v-on:click="previousTrack" text> <font-awesome-icon icon="backward" /> </v-btn>
-				<v-btn v-on:click="playPause" text>
+				<v-btn :color="getColors[0]" v-on:click="previousTrack" text>
+					<font-awesome-icon icon="backward" />
+				</v-btn>
+				<v-btn :color="getColors[0]" v-on:click="playPause" text>
 					<font-awesome-icon v-if="playing" icon="pause" /> <font-awesome-icon v-else icon="play" />
 				</v-btn>
 
-				<v-btn v-on:click="nextTrack({ skip: true })" text>
+				<v-btn :color="getColors[0]" v-on:click="nextTrack({ skip: true })" text>
 					<font-awesome-icon icon="forward" />
 				</v-btn>
 
@@ -64,7 +69,7 @@
 						vertical
 					></v-slider>
 				</v-btn> -->
-				<v-btn v-on:click="setVolume(volume === 0 ? 10 : volume === 10 ? 50 : 0)" text>
+				<v-btn :color="getColors[0]" v-on:click="setVolume(volume === 0 ? 10 : volume === 10 ? 50 : 0)" text>
 					<font-awesome-icon v-if="volume === 50" icon="volume-up" />
 					<font-awesome-icon v-if="volume === 10" icon="volume-down" />
 					<font-awesome-icon v-if="volume === 0" icon="volume-mute" />
@@ -111,11 +116,13 @@ export default {
 	methods: {
 		toggle(state) {
 			this.playing = state;
+			this.$store.commit('musics/toggle', this.playing);
 		},
 
 		playPause() {
 			this.playing = !this.playing;
 			this.playing ? this.$refs.player.play() : this.$refs.player.pause();
+			this.$store.commit('musics/setPlaying', this.playing);
 		},
 
 		nextTrack({ skip }) {
@@ -158,7 +165,7 @@ export default {
 		},
 
 		share() {
-			const url = `${window.location.host}${location.pathname}?artist=${this.getMusic.artist}&title=${this.getMusic.title}`;
+			const url = `${location.host}${location.pathname}?artist=${this.getMusic.artist}&title=${this.getMusic.title}`;
 
 			if (window.isSecureContext) {
 				navigator.clipboard.writeText(url);
@@ -206,7 +213,6 @@ export default {
 
 		width: 0;
 		height: 0.5rem;
-		background-color: var(--mainColor);
 	}
 }
 
@@ -220,15 +226,10 @@ export default {
 }
 
 .v-btn {
-	&:not(#share) {
-		color: var(--mainColor);
-	}
-
 	&#share {
 		position: absolute;
 		top: 5px;
 		right: 5px;
-		background-color: var(--mainColor);
 	}
 }
 </style>

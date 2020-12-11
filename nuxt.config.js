@@ -8,7 +8,7 @@ module.exports = {
 	},
 
 	router: {
-		base: '/musiques/',
+		base: '/musiques',
 		trailingSlash: false
 	},
 

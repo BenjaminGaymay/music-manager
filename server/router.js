@@ -33,9 +33,9 @@ const listMusics = directory => {
 	}, {});
 };
 
-// const musics = listMusics(`${__dirname}/../static/musics`);
+const musics = listMusics(`${__dirname}/../static/musics`);
 // const musics = listMusics(`D:\\Musiques`);
-const musics = listMusics('/home/pi/Documents/Flask/static/musics');
+// const musics = listMusics('/home/pi/Documents/Flask/static/musics');
 
 module.exports = () => {
 	router.get('/', (req, res) => {
