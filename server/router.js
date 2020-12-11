@@ -15,7 +15,7 @@ const listMusics = directory => {
 
 			musics = musics.filter(m => m.endsWith('.mp3'));
 			a[v] = musics.map(e => ({
-				src: `musics/${v}/${e}`.replace('%', '%25'),
+				src: `/musiques/musics/${v}/${e}`.replace('%', '%25'),
 				img: fs.existsSync(`${directory}/${v}/${e}`.replace(/\.mp3$/, '.jpg'))
 					? `/musiques/musics/${v}/${e}`.replace(/\.mp3$/, '.jpg').replace('%', '%25')
 					: '/musiques/img/default.png',

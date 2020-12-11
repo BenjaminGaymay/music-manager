@@ -111,7 +111,7 @@ export default {
 	}),
 
 	async fetch() {
-		this.fullList = await this.$axios.$get('https://benjamin-gaymay.eu/musiques/musics');
+		this.fullList = await this.$axios.$get('https://benjamin-gaymay.eu/musiques/list');
 
 		this.genPlaylist();
 	},

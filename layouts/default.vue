@@ -5,7 +5,7 @@
 				--mainColor: {{ getColors[0] }};
 				--secondaryColor: {{ getColors[1] }};
 
-				background-image: url("{{ getMusic ? getMusic.blur : '/img/default.png.blur' }}");
+				background-image: url("{{ getMusic ? getMusic.blur : 'musiques/img/default.png.blur' }}");
 				background-size: 100% 100%;
 			}
 		</style>

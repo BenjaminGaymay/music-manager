@@ -22,7 +22,7 @@ const start = async () => {
 	}
 
 	// Give nuxt middleware to express
-	app.use('/musics', router);
+	app.use('/list', router);
 	app.use(nuxt.render);
 
 	// Listen the server
