@@ -158,7 +158,7 @@ export default {
 		},
 
 		share() {
-			const url = `${window.location.host}/?artist=${this.getMusic.artist}&title=${this.getMusic.title}`;
+			const url = `${window.location.host}${location.pathname}?artist=${this.getMusic.artist}&title=${this.getMusic.title}`;
 
 			if (window.isSecureContext) {
 				navigator.clipboard.writeText(url);
