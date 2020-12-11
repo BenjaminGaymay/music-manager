@@ -111,7 +111,7 @@ export default {
 	}),
 
 	async fetch() {
-		this.fullList = await this.$axios.$get('http://192.168.1.78:8080/musics');
+		this.fullList = await this.$axios.$get('https://benjamin-gaymay.eu/musiques/musics');
 
 		this.genPlaylist();
 	},

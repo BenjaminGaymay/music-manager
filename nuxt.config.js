@@ -7,6 +7,10 @@ module.exports = {
 		timing: false
 	},
 
+	router: {
+		base: '/musiques/'
+	},
+
 	ssr: true,
 	/*
 	 ** Headers of the page
