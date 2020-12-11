@@ -17,11 +17,11 @@ const listMusics = directory => {
 			a[v] = musics.map(e => ({
 				src: `musics/${v}/${e}`.replace('%', '%25'),
 				img: fs.existsSync(`${directory}/${v}/${e}`.replace(/\.mp3$/, '.jpg'))
-					? `musics/${v}/${e}`.replace(/\.mp3$/, '.jpg').replace('%', '%25')
-					: '/img/default.png',
+					? `/musiques/musics/${v}/${e}`.replace(/\.mp3$/, '.jpg').replace('%', '%25')
+					: '/musiques/img/default.png',
 				blur: fs.existsSync(`${directory}/${v}/${e}`.replace(/\.mp3$/, '.jpg.blur'))
-					? `musics/${v}/${e}`.replace(/\.mp3$/, '.jpg.blur').replace('%', '%25')
-					: '/img/default.png.blur',
+					? `/musiques/musics/${v}/${e}`.replace(/\.mp3$/, '.jpg.blur').replace('%', '%25')
+					: '/musiques/img/default.png.blur',
 				artist: v,
 				title: e.match(/^.+ - (.+)\.mp3$/)[1],
 				timestamp: fs.statSync(`${directory}/${v}/${e}`).mtime.getTime(),
