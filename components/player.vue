@@ -98,6 +98,10 @@ export default {
 	},
 
 	watch: {
+		getIndex() {
+			this.setMedia(this.getMusic);
+		},
+
 		getMusic() {
 			if (!this.getMusic.skip || !this.$refs.player.paused) this.$nextTick(() => this.$refs.player.play());
 			if (!this.getMusic.skip) this.playing = true;
@@ -156,8 +160,35 @@ export default {
 		share() {
 			const url = `${window.location.host}/?artist=${this.getMusic.artist}&title=${this.getMusic.title}`;
 
-			navigator.clipboard.writeText(url);
-			this.showTooltip = true;
+			if (window.isSecureContext) {
+				navigator.clipboard.writeText(url);
+				this.showTooltip = true;
+			}
+		},
+
+		setMedia(music) {
+			if ('mediaSession' in navigator) {
+				navigator.mediaSession.metadata = new MediaMetadata({
+					title: music.title,
+					artist: music.artist,
+					artwork: [
+						{ src: music.img, sizes: '96x96', type: 'image/jpg' },
+						{ src: music.img, sizes: '128x128', type: 'image/jpg' },
+						{ src: music.img, sizes: '192x192', type: 'image/jpg' },
+						{ src: music.img, sizes: '256x256', type: 'image/jpg' },
+						{ src: music.img, sizes: '384x384', type: 'image/jpg' },
+						{ src: music.img, sizes: '512x512', type: 'image/jpg' }
+					]
+				});
+
+				navigator.mediaSession.setActionHandler('play', this.playPause);
+				navigator.mediaSession.setActionHandler('pause', this.playPause);
+
+				navigator.mediaSession.setActionHandler('seekto', to => (this.$refs.player.currentTime = to.seekTime));
+
+				navigator.mediaSession.setActionHandler('previoustrack', this.previousTrack);
+				navigator.mediaSession.setActionHandler('nexttrack', this.nextTrack);
+			}
 		}
 	}
 };

@@ -3,6 +3,12 @@ const { Router } = require('express');
 const router = Router();
 
 const listMusics = directory => {
+	const formatter = new Intl.DateTimeFormat('fr-FR', {
+		year: 'numeric',
+		month: 'long',
+		day: 'numeric'
+	});
+
 	return fs.readdirSync(directory).reduce((a, v) => {
 		try {
 			let musics = fs.readdirSync(`${directory}/${v}`);
@@ -18,7 +24,8 @@ const listMusics = directory => {
 					: '/img/default.png.blur',
 				artist: v,
 				title: e.match(/^.+ - (.+)\.mp3$/)[1],
-				date: fs.statSync(`${directory}/${v}/${e}`).mtime.getTime()
+				timestamp: fs.statSync(`${directory}/${v}/${e}`).mtime.getTime(),
+				date: formatter.format(new Date(fs.statSync(`${directory}/${v}/${e}`).mtime.getTime()))
 			}));
 		} catch (e) {}
 
@@ -26,8 +33,8 @@ const listMusics = directory => {
 	}, {});
 };
 
-// const musics = listMusics(`${__dirname}/../static/musics`);
-const musics = listMusics(`D:\\Musiques`);
+const musics = listMusics(`${__dirname}/../static/musics`);
+// const musics = listMusics(`D:\\Musiques`);
 
 module.exports = () => {
 	router.get('/', (req, res) => {

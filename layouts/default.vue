@@ -2,12 +2,15 @@
 	<v-app dark>
 		<style v-if="getMusic">
 			:root {
-				--mainColor: {{ getColors[0]}};
-				--secondaryColor: {{ getColors[1]}};
+				--mainColor: {{ getColors[0] }};
+				--secondaryColor: {{ getColors[1] }};
+
+				background-image: url("{{ getMusic ? getMusic.blur : '/img/default.png.blur' }}");
+				background-size: 100% 100%;
 			}
 		</style>
 
-		<img id="bg" v-if="getMusic" :src="getMusic.blur" />
+		<!-- <img id="bg" v-if="getMusic" :src="getMusic.blur" /> -->
 
 		<!-- <div>
 			<div class="rect"></div>
@@ -56,6 +59,10 @@ export default {
 </script>
 
 <style scoped>
+.v-application {
+	background-color: rgba(0, 0, 0, 0) !important;
+}
+
 #bg {
 	position: absolute;
 	top: 0;

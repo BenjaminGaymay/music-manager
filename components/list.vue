@@ -1,52 +1,97 @@
 <template>
-	<v-layout column justify-center align-center>
-		<v-card width="800" class="mx-auto" min-height="300px" :class="!show ? 'invisible' : ''">
+	<v-container column justify-center align-center>
+		<v-card max-width="800px" class="mx-auto" min-height="300px">
 			<v-toolbar>
-				<v-toolbar-title :class="sortMethod === 0 ? 'selected' : ''" @click="sortMethod = 0">
+				<v-toolbar-title :class="sortMethod === null ? 'selected' : ''" @click="sortMethod = null">
 					Aléatoire
 				</v-toolbar-title>
 
-				<v-toolbar-title :class="sortMethod === 1 ? 'selected' : ''" @click="sortMethod = 1">
+				<v-toolbar-title :class="sortMethod === 'date' ? 'selected' : ''" @click="sortMethod = 'date'">
 					Dates
 				</v-toolbar-title>
 
-				<v-toolbar-title :class="sortMethod === 2 ? 'selected' : ''" @click="sortMethod = 2">
+				<v-toolbar-title :class="sortMethod === 'artist' ? 'selected' : ''" @click="sortMethod = 'artist'">
 					Artistes
 				</v-toolbar-title>
 
 				<v-spacer></v-spacer>
 
 				<v-text-field class="filterInput" v-model="filter" color="#ffffff" label="Rechercher"></v-text-field>
-
-				<font-awesome-icon class="icon" v-if="!show" @click="show = true" icon="angle-double-down" />
-				<font-awesome-icon class="icon" ref="" v-else @click="show = false" icon="angle-double-up" />
 			</v-toolbar>
 
-			<v-list v-if="show" max-height="500px" class="overflow-y-auto">
-				<v-list-group v-for="(musics, key) in filtered" :key="key" no-action>
-					<template v-slot:activator>
-						<v-list-item-avatar v-if="sortMethod !== 1">
-							<v-img :src="musics[0].img"></v-img>
-						</v-list-item-avatar>
+			<v-data-table
+				hide-default-header
+				hide-default-footer
+				:single-select="false"
+				v-model="selected"
+				:headers="[
+					{ text: 'Couverture', value: 'img', filterable: false },
+					{ text: 'Titre', value: 'title' },
+					{ text: 'Artiste', value: 'artist' }
+				]"
+				:items="playlist"
+				item-key="src"
+				:search="filter"
+				:custom-sort="customSort"
+				:group-by="sortMethod"
+				:page.sync="page"
+				@page-count="pageCount = $event"
+			>
+				<template v-if="sortMethod !== null" v-slot:group.header="{ items, isOpen }">
+					<th colspan="100%" @click="toggle(items[0])">
+						<v-btn text icon small color="white">
+							<v-icon>{{
+								(sortMethod === 'artist' && items[0].artist === selectedGroup.key) ||
+								(sortMethod === 'date' && items[0].date === selectedGroup.key)
+									? 'mdi-minus'
+									: 'mdi-plus'
+							}}</v-icon>
+						</v-btn>
+						<span class="mx-2 subtitle-1">
+							{{ sortMethod === 'artist' ? items[0].artist : items[0].date }}
+						</span>
+					</th>
+				</template>
 
-						<v-list-item-content>
-							<v-list-item-title v-text="key"></v-list-item-title>
-						</v-list-item-content>
-					</template>
+				<template slot="item" slot-scope="props">
+					<tr
+						v-if="!selectedGroup.group || props.item[selectedGroup.group] === selectedGroup.key"
+						@click="select(props.item)"
+						:class="
+							props.item.title === getMusic.title && props.item.artist === getMusic.artist
+								? 'v-data-table__selected'
+								: ''
+						"
+					>
+						<td>
+							<v-list-item-avatar>
+								<v-img :src="props.item.img" />
+							</v-list-item-avatar>
+						</td>
 
-					<v-list-item v-for="music in musics" :key="music.src" v-on:click="select(music)">
-						<v-list-item-avatar>
-							<v-img :src="music.img"></v-img>
-						</v-list-item-avatar>
+						<td>{{ props.item.title }} - {{ props.item.artist }}</td>
 
-						<v-list-item-content>
-							<v-list-item-title v-text="music.title"></v-list-item-title>
-						</v-list-item-content>
-					</v-list-item>
-				</v-list-group>
-			</v-list>
+						<td>
+							{{
+								props.item.title === getMusic.title && props.item.artist === getMusic.artist
+									? 'playing'
+									: ''
+							}}
+						</td>
+					</tr>
+				</template>
+			</v-data-table>
+
+			<div class="text-center pt-2">
+				<v-pagination
+					v-model="page"
+					:length="pageCount"
+					:total-visible="7"
+					:color="getColors[0]"
+				></v-pagination>
+			</div>
 		</v-card>
-	</v-layout>
+	</v-container>
 </template>
 
 <script>
@@ -54,110 +99,106 @@ import { mapMutations, mapGetters } from 'vuex';
 
 export default {
 	data: () => ({
-		fullList: {},
-		formatted: {},
-		filtered: {},
-		sortMethod: 0,
-		show: false,
-		filter: null
+		fullList: [],
+		sortMethod: null,
+		filter: '',
+		playlist: [],
+		selected: [],
+		page: 1,
+		pageCount: 0,
+		itemsPerPage: 10,
+		selectedGroup: { group: null, key: null }
 	}),
 
 	async fetch() {
-		this.fullList = await this.$axios.$get('http://localhost:3000/musics');
-		this.formatted = this.fullList;
+		this.fullList = await this.$axios.$get('http://192.168.1.78:8080/musics');
 
-		this.genPlaylist(0);
-		if (!this.getMusic) this.$store.commit('musics/setMusic', { ...this.getPlaylist[0], skip: true });
+		this.genPlaylist();
 	},
 
 	computed: {
 		...mapGetters('colors', ['getColors']),
-		...mapGetters('musics', ['getPlaylist', 'getMusic'])
+		...mapGetters('musics', ['getPlaylist', 'getMusic', 'getIndex'])
 	},
 
 	watch: {
 		sortMethod() {
 			this.genPlaylist();
+
+			this.$store.commit('musics/setIndexToMusic', this.getMusic);
+
+			if (this.sortMethod === 'artist') this.selectedGroup = { group: 'artist', key: this.getMusic.artist };
+			else if (this.sortMethod === 'date') this.selectedGroup = { group: 'date', key: this.getMusic.date };
+		},
+
+		getIndex(index) {
+			this.filter = '';
+			this.selected = [this.playlist[index]];
+			this.page = Math.ceil((index + 1) / this.itemsPerPage);
+
+			if (this.sortMethod === 'artist') this.selectedGroup = { group: 'artist', key: this.getMusic.artist };
+			else if (this.sortMethod === 'date') this.selectedGroup = { group: 'date', key: this.getMusic.date };
 		},
 
 		filter(value) {
-			this.filterMusics();
+			value = value.toLowerCase();
+			const length = this.playlist.filter(
+				e => e.title.toLowerCase().includes(value) || e.artist.toLowerCase().includes(value)
+			).length;
+
+			this.page = 1;
 		}
 	},
 
 	methods: {
 		genPlaylist() {
-			let playlist = [];
+			this.playlist = [];
 
 			switch (this.sortMethod) {
-				case 0:
-					for (const artist in this.fullList) playlist.push(...this.fullList[artist]);
-					playlist = playlist
+				case null:
+					for (const artist in this.fullList) this.playlist.push(...this.fullList[artist]);
+					this.playlist = this.playlist
 						.map(a => [Math.random(), a])
 						.sort((a, b) => a[0] - b[0])
 						.map(a => a[1]);
 
-					this.formatted = this.fullList;
 					break;
 
-				case 1:
-					const formater = new Intl.DateTimeFormat('fr-FR', {
-						year: 'numeric',
-						month: 'long',
-						day: 'numeric'
-					});
+				case 'date':
+					for (const artist in this.fullList) this.playlist.push(...this.fullList[artist]);
+					this.playlist = this.playlist.sort((a, b) => a.timestamp - b.timestamp);
 
-					for (const artist in this.fullList) playlist.push(...this.fullList[artist]);
-
-					playlist = playlist.sort((a, b) => a.date - b.date);
-					this.formatted = playlist.reduce((acc, cur) => {
-						const date = formater.format(new Date(cur.date));
-						if (acc[date]) acc[date].push(cur);
-						else acc[date] = [cur];
-
-						return acc;
-					}, {});
 					break;
 
-				case 2:
-					for (const artist in this.fullList) playlist.push(...this.fullList[artist]);
-					this.formatted = this.fullList;
+				case 'artist':
+					for (const artist in this.fullList) this.playlist.push(...this.fullList[artist]);
 					break;
 			}
 
-			this.filterMusics();
+			this.selectedGroup = { group: this.sortMethod, key: null };
 
-			this.$store.commit('musics/setPlaylist', playlist);
+			this.$store.commit('musics/setPlaylist', this.playlist);
+
 			if (this.getMusic) this.$store.commit('musics/setIndexToMusic', this.getMusic);
+			else this.$store.commit('musics/setMusic', { ...this.playlist[0], skip: true });
 		},
 
 		select(music) {
 			this.$store.commit('musics/setMusic', music);
-			this.genPlaylist();
+			this.$store.commit('musics/setIndexToMusic', this.getMusic);
 		},
 
-		filterMusics() {
-			if (!this.filter) {
-				this.filtered = this.formatted;
-				return;
-			}
+		toggle(item) {
+			const select = { group: this.sortMethod, key: this.sortMethod === 'artist' ? item.artist : item.date };
 
-			this.filter = this.filter.toLowerCase();
-			this.filtered = Object.keys(this.formatted).reduce((acc, cur) => {
-				if (this.sortMethod !== 1 && cur.toLowerCase().includes(this.filter)) acc[cur] = this.formatted[cur];
-				else {
-					for (const elem of this.formatted[cur]) {
-						if (
-							elem.title.toLowerCase().includes(this.filter) ||
-							(this.sortMethod === 1 && elem.artist.toLowerCase().includes(this.filter))
-						) {
-							if (acc[cur]) acc[cur].push(elem);
-							else acc[cur] = [elem];
-						}
-					}
-				}
-				return acc;
-			}, {});
+			if (this.selectedGroup.key !== select.key || this.selectedGroup.group !== select.group) {
+				this.selectedGroup = select;
+			} else this.selectedGroup = { group: this.sortMethod, key: null };
+		},
+
+		customSort(items, index, isDesc) {
+			if (this.sortMethod === 'date') items.sort((a, b) => a.timestamp - b.timestamp);
+			return items;
 		}
 	}
 };
@@ -191,22 +232,26 @@ export default {
 	}
 }
 
-.v-list-item--active .v-list-item__content {
-	color: var(--mainColor) !important;
-}
-
 .icon {
 	cursor: pointer;
-}
-
-.invisible {
-	background-color: rgba(0, 0, 0, 0);
-	box-shadow: unset;
 }
 </style>
 
 <style lang="scss">
+.v-data-table__wrapper {
+	min-height: 300px;
+}
+
 .v-list-item--link:before {
+	background-color: var(--mainColor) !important;
+}
+
+.theme--dark.v-data-table .v-row-group__header,
+.theme--dark.v-data-table .v-row-group__summary {
+	background-color: var(--secondaryColor) !important;
+}
+
+.v-pagination__navigation {
 	background-color: var(--mainColor) !important;
 }
 </style>

@@ -20,13 +20,7 @@ export default {
 	head() {
 		return {
 			title: this.title,
-			link: [
-				{
-					rel: 'icon',
-					type: 'image/jpg',
-					href: this.cover
-				}
-			]
+			link: [{ hid: 'icon', rel: 'icon', type: 'image/jpg', href: this.cover }]
 		};
 	},
 
