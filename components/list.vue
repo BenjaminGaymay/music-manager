@@ -149,10 +149,7 @@ export default {
 			this.page = Math.ceil((index + 1) / this.itemsPerPage);
 
 			if (this.sortMethod === 'artist') this.selectedGroup = { group: 'artist', key: this.getMusic.artist };
-			else if (this.sortMethod === 'date') {
-				this.selectedGroup = { group: 'date', key: this.getMusic.date };
-				this.page = Math.ceil((this.playlist.length - index + 1) / this.itemsPerPage);
-			}
+			else if (this.sortMethod === 'date') this.selectedGroup = { group: 'date', key: this.getMusic.date };
 		},
 
 		filter(value) {
@@ -185,7 +182,7 @@ export default {
 
 				case 'date':
 					for (const artist in this.fullList) this.playlist.push(...this.fullList[artist]);
-					this.playlist = this.playlist.sort((a, b) => a.timestamp - b.timestamp);
+					this.playlist = this.playlist.sort((a, b) => a.timestamp - b.timestamp).reverse();
 
 					break;
 
