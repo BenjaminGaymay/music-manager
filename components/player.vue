@@ -165,7 +165,7 @@ export default {
 		},
 
 		share() {
-			const url = `${location.host}${location.pathname}?artist=${this.getMusic.artist}&title=${this.getMusic.title}`;
+			const url = `https://${location.host}${location.pathname}?artist=${this.getMusic.artist}&title=${this.getMusic.title}`;
 
 			if (window.isSecureContext) {
 				navigator.clipboard.writeText(url);
