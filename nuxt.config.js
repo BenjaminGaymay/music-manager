@@ -50,8 +50,8 @@ module.exports = {
 	modules: ['@nuxtjs/axios'],
 
 	axios: {
-		// baseURL: 'https://benjamin-gaymay.eu/musiques'
-		baseURL: 'http://localhost:8080'
+		baseURL: 'https://benjamin-gaymay.eu/musiques'
+		// baseURL: 'http://localhost:8080'
 	},
 	/*
 	 ** vuetify module configuration
