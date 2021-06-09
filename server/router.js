@@ -49,15 +49,10 @@ setInterval(() => {
 			playlist.reduce((acc, cur) => {
 				acc[cur.src.replace('%25', '%')] = cur.tags;
 				return acc;
-			}, {}),
-			null,
-			4
+			}, {})
 		)
 	);
-}, 60000);
-
-// const musics = listMusics(`D:\\Musiques`);
-// const musics = listMusics('/home/pi/Documents/Flask/static/musics');
+}, 900000);
 
 module.exports = () => {
 	router.get('/list', (req, res) => {
@@ -66,20 +61,24 @@ module.exports = () => {
 
 	router.get('/untagged', (req, res) => {
 		let playlist = [];
-		for (const artist in musics) playlist.push(...musics[artist]);
+		for (const artist in musics) {
+			for (music of musics[artist]) if (music.tags.length === 0) playlist.push(music);
+		}
 
-		res.json(playlist.filter(e => e.tags.length === 0));
+		res.json(playlist);
 	});
 
 	router.get('/tagged', (req, res) => {
 		let playlist = [];
-		for (const artist in musics) playlist.push(...musics[artist]);
+		for (const artist in musics) {
+			for (music of musics[artist]) if (music.tags.length > 0) playlist.push(music);
+		}
 
-		res.json(playlist.filter(e => e.tags.length > 0));
+		res.json(playlist);
 	});
 
 	router.get('/tags', (req, res) => {
-		let tags = [
+		let tags = new Set([
 			'rock doux',
 			'rock/métal',
 			'dubstep',
@@ -100,10 +99,14 @@ module.exports = () => {
 			'rap',
 			'lo-fi',
 			'inattendu'
-		];
-		for (const artist in musics) tags = tags.concat(musics[artist].reduce((acc, cur) => acc.concat(cur.tags), []));
+		]);
 
-		res.json([...new Set(tags)]);
+		for (const artist in musics) {
+			for (music of musics[artist]) for (tag of music.tags) tags.add(tag);
+		}
+		// tags = tags.concat(musics[artist].reduce((acc, cur) => acc.concat(cur.tags), []));
+
+		res.json([...tags]);
 	});
 
 	router.put('/tag', (req, res) => {
