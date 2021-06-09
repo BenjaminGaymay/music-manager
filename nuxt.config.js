@@ -1,6 +1,8 @@
 // const colors = require('vuetify/es5/util/colors').default
 
 module.exports = {
+	telemetry: false,
+
 	server: {
 		port: 8080, // default: 3000
 		host: '0.0.0.0', // default: localhost,
@@ -24,7 +26,7 @@ module.exports = {
 			{ name: 'viewport', content: 'width=device-width, initial-scale=1' },
 			{ hid: 'description', name: 'description', content: process.env.npm_package_description || '' }
 		],
-		link: [{ hid: 'icon', rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }]
+		link: [{ hid: 'icon', rel: 'icon', type: 'image/x-icon', href: '/musiques/img/default.png' }]
 	},
 	/*
 	 ** Customize the progress-bar color
@@ -46,6 +48,11 @@ module.exports = {
 	 ** Nuxt.js modules
 	 */
 	modules: ['@nuxtjs/axios'],
+
+	axios: {
+		// baseURL: 'https://benjamin-gaymay.eu/musiques'
+		baseURL: 'http://localhost:8080'
+	},
 	/*
 	 ** vuetify module configuration
 	 ** https://github.com/nuxt-community/vuetify-module

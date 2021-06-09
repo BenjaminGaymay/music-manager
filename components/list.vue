@@ -107,7 +107,7 @@
 </template>
 
 <script>
-import { mapMutations, mapGetters } from 'vuex';
+import { mapGetters } from 'vuex';
 
 export default {
 	data: () => ({
@@ -123,7 +123,7 @@ export default {
 	}),
 
 	async fetch() {
-		this.fullList = await this.$axios.$get('https://benjamin-gaymay.eu/musiques/list');
+		this.fullList = await this.$axios.$get('/list');
 
 		this.genPlaylist();
 	},
@@ -155,9 +155,9 @@ export default {
 		filter(value) {
 			if (value) {
 				value = value.toLowerCase();
-				const length = this.playlist.filter(
-					e => e.title.toLowerCase().includes(value) || e.artist.toLowerCase().includes(value)
-				).length;
+				// const length = this.playlist.filter(
+				// 	e => e.title.toLowerCase().includes(value) || e.artist.toLowerCase().includes(value)
+				// ).length;
 
 				this.page = 1;
 			} else {

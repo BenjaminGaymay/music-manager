@@ -49,7 +49,7 @@ export default {
 
 	watch: {
 		getMusic(music) {
-			this.backgroundAndColors(music);
+			if (music) this.backgroundAndColors(music);
 		}
 	},
 

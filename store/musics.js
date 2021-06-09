@@ -31,6 +31,10 @@ export const mutations = {
 		state.music = music;
 	},
 
+	setPlaying(state, playing) {
+		state.playing = playing;
+	},
+
 	setIndexToMusic(state, music) {
 		for (const i in state.playlist) {
 			if (state.playlist[i].title === music.title && state.playlist[i].artist === music.artist) {

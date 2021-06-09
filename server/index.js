@@ -21,8 +21,10 @@ const start = async () => {
 		await builder.build();
 	}
 
+	app.use(express.json());
+
 	// Give nuxt middleware to express
-	app.use('/list', router);
+	app.use('/', router);
 	app.use(nuxt.render);
 
 	// Listen the server

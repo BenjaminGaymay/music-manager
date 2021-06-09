@@ -104,10 +104,12 @@ export default {
 
 	watch: {
 		getIndex() {
-			this.setMedia(this.getMusic);
+			if (this.getMusic) this.setMedia(this.getMusic);
 		},
 
 		getMusic() {
+			if (!this.getMusic) return;
+
 			if (!this.getMusic.skip || !this.$refs.player.paused) this.$nextTick(() => this.$refs.player.play());
 			if (!this.getMusic.skip) this.playing = true;
 		}
@@ -120,12 +122,16 @@ export default {
 		},
 
 		playPause() {
+			if (!this.getMusic) return;
+
 			this.playing = !this.playing;
 			this.playing ? this.$refs.player.play() : this.$refs.player.pause();
 			this.$store.commit('musics/setPlaying', this.playing);
 		},
 
 		nextTrack({ skip }) {
+			if (this.getPlaylist.length === 0) return;
+
 			const index = (this.getIndex + 1) % this.getPlaylist.length;
 
 			this.progression = 0;
@@ -134,6 +140,8 @@ export default {
 		},
 
 		previousTrack() {
+			if (this.getPlaylist.length === 0) return;
+
 			const index = this.getIndex - 1 >= 0 ? this.getIndex - 1 : this.getPlaylist.length - 1;
 
 			this.progression = 0;
@@ -142,6 +150,8 @@ export default {
 		},
 
 		updateProgression() {
+			if (!this.getMusic) return;
+
 			try {
 				this.progression = (this.$refs.player.currentTime / this.$refs.player.duration) * 100;
 			} catch (e) {
@@ -150,6 +160,8 @@ export default {
 		},
 
 		setProgression(event) {
+			if (!this.getMusic) return;
+
 			const offsetWidth = event.srcElement.classList.contains('v-sheet')
 				? event.srcElement.offsetParent.offsetWidth
 				: event.srcElement.offsetWidth;
@@ -165,6 +177,8 @@ export default {
 		},
 
 		share() {
+			if (!this.getMusic) return;
+
 			const url = `https://${location.host}${location.pathname}?artist=${this.getMusic.artist}&title=${this.getMusic.title}`;
 
 			if (window.isSecureContext) {

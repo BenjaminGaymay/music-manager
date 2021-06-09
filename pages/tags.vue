@@ -1,12 +1,13 @@
 <template>
 	<v-layout column justify-center align-center>
+		<quicklist class="list" />
 		<player class="player" />
-		<list class="list" />
+		<tags />
 	</v-layout>
 </template>
 
 <script>
-import list from '~/components/list.vue';
+import quicklist from '~/components/quicklist.vue';
 import player from '~/components/player.vue';
 import tags from '~/components/tags.vue';
 
@@ -14,7 +15,7 @@ import { mapGetters } from 'vuex';
 
 export default {
 	components: {
-		list,
+		quicklist,
 		player,
 		tags
 	},
