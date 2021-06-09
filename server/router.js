@@ -43,8 +43,6 @@ setInterval(() => {
 	for (const artist in musics) playlist.push(...musics[artist]);
 	playlist = playlist.sort((a, b) => a.timestamp - b.timestamp).reverse();
 
-	console.log('write file');
-
 	fs.writeFileSync(
 		`${__dirname}/../tags.json`,
 		JSON.stringify(
