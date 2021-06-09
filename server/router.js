@@ -54,7 +54,7 @@ setInterval(() => {
 			}, {})
 		)
 	);
-}, 10000);
+}, 900000);
 
 module.exports = () => {
 	router.get('/list', (req, res) => {
@@ -111,10 +111,8 @@ module.exports = () => {
 	});
 
 	router.put('/tag', (req, res) => {
-		console.log('add tag:', req.body.tag, '-', req.body.artist, '-', req.body.src);
 		for (music in musics[req.body.artist]) {
 			if (musics[req.body.artist][music].src === req.body.src) {
-				console.log('succeed');
 				musics[req.body.artist][music].tags.push(req.body.tag);
 			}
 		}
@@ -123,10 +121,8 @@ module.exports = () => {
 	});
 
 	router.delete('/tag', (req, res) => {
-		console.log('remove tag:', req.body.tag, '-', req.body.artist, '-', req.body.src);
 		for (music in musics[req.body.artist]) {
 			if (musics[req.body.artist][music].src === req.body.src) {
-				console.log('succeed');
 				musics[req.body.artist][music].tags.splice(
 					musics[req.body.artist][music].tags.indexOf(req.body.tag, 1)
 				);
