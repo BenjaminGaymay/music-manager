@@ -1,6 +1,6 @@
 <template>
 	<v-card :style="{ backgroundColor: getColors[0] }" class="mx-auto" min-width="300px" width="min(400px, 90%)">
-		<v-toolbar dense tile :color="getColors[0]" class="mx-auto">
+		<v-toolbar dense tile :color="getColors[0]" class="mx-auto rounded">
 			<v-toolbar-title style="cursor: pointer" :class="!tagged ? 'font-weight-bold' : ''" @click="getUntagged">
 				Ajouts
 			</v-toolbar-title>

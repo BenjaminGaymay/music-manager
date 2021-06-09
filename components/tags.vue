@@ -1,30 +1,28 @@
 <template>
-	<v-container column justify-center align-center>
-		<v-combobox
-			:style="{ maxWidth: 'min(50%, 600px)' }"
-			class="mx-auto mt-4"
-			v-model="tags"
-			:items="items"
-			multiple
-			small-chips
-			solo
-			@change="add"
-		>
-			<template v-slot:selection="data">
-				<v-chip
-					:key="JSON.stringify(data.item)"
-					v-bind="data.attrs"
-					:input-value="data.selected"
-					:disabled="data.disabled"
-					close
-					:style="{ backgroundColor: getColors[0] }"
-					@click:close="remove(data.item)"
-				>
-					{{ data.item }}
-				</v-chip>
-			</template>
-		</v-combobox>
-	</v-container>
+	<v-combobox
+		:style="{ maxWidth: '600px', minWidth: '300px', width: '100%' }"
+		class="mx-auto mt-4"
+		v-model="tags"
+		:items="items"
+		multiple
+		small-chips
+		solo
+		@change="add"
+	>
+		<template v-slot:selection="data">
+			<v-chip
+				:key="JSON.stringify(data.item)"
+				v-bind="data.attrs"
+				:input-value="data.selected"
+				:disabled="data.disabled"
+				close
+				:style="{ backgroundColor: getColors[0] }"
+				@click:close="remove(data.item)"
+			>
+				{{ data.item }}
+			</v-chip>
+		</template>
+	</v-combobox>
 </template>
 
 <script>

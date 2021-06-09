@@ -170,7 +170,10 @@
     "/musiques/musics/Taylor Swift/Taylor Swift - We Are Never Ever Getting Back Together.mp3": [],
     "/musiques/musics/Taylor Swift/Taylor Swift - Blank Space.mp3": [],
     "/musiques/musics/Taylor Swift/Taylor Swift - Paper Rings.mp3": [],
-    "/musiques/musics/Taylor Swift/Taylor Swift - I Knew You Were Trouble.mp3": [],
+    "/musiques/musics/Taylor Swift/Taylor Swift - I Knew You Were Trouble.mp3": [
+        "pop",
+        "classique (pop)"
+    ],
     "/musiques/musics/Tamara/Tamara  - Knockin' on heaven's door.mp3": [],
     "/musiques/musics/Talisco/Talisco - The Keys.mp3": [],
     "/musiques/musics/System of a Down/System of a Down - Chop Suey.mp3": [],
@@ -247,7 +250,10 @@
     "/musiques/musics/Simple Plan/Simple Plan - Can't Keep My Hands Off You (feat. Rivers Cuomo).mp3": [],
     "/musiques/musics/Simple Plan/Simple Plan - When I'm Gone.mp3": [],
     "/musiques/musics/Simon Says!/Simon Says! - one more time (feat. Devonte).mp3": [],
-    "/musiques/musics/Silence The City/Silence The City - Burn.mp3": [],
+    "/musiques/musics/Silence The City/Silence The City - Burn.mp3": [
+        "punk/rock",
+        "punk/rock"
+    ],
     "/musiques/musics/SIAMÉS/SIAMÉS - The Wolf.mp3": [],
     "/musiques/musics/Shoffy/Shoffy - I Can't Help (feat. Sarcastic Sounds).mp3": [],
     "/musiques/musics/Shaka Ponk/Shaka Ponk - My Name Is Stain.mp3": [],
@@ -419,7 +425,9 @@
     "/musiques/musics/Nightcore/Nightcore - Monsters.mp3": [],
     "/musiques/musics/Nightcore/Nightcore - Carnivore.mp3": [],
     "/musiques/musics/Nightcore/Nightcore - Angel With a Shotgun.mp3": [],
-    "/musiques/musics/Nightcore/Nightcore - Centuries.mp3": [],
+    "/musiques/musics/Nightcore/Nightcore - Centuries.mp3": [
+        "nightcore"
+    ],
     "/musiques/musics/Nightcore/Nightcore - This Is War.mp3": [],
     "/musiques/musics/Nightcore/Nightcore - White Rabbit.mp3": [],
     "/musiques/musics/Nightcore/Nightcore - Courtesy Call.mp3": [],
@@ -820,7 +828,9 @@
     "/musiques/musics/Dark Signal/Dark Signal - Drag Me to Hell.mp3": [],
     "/musiques/musics/Danakil/Danakil - Marley.mp3": [],
     "/musiques/musics/Danakil/Danakil - Les Champs de roses.mp3": [],
-    "/musiques/musics/Danakil/Danakil - Hypocrites.mp3": [],
+    "/musiques/musics/Danakil/Danakil - Hypocrites.mp3": [
+        "reggae"
+    ],
     "/musiques/musics/Dada Life/Dada Life - Feed The Dada.mp3": [],
     "/musiques/musics/Culture Code/Culture Code - Make Me Move (feat. Karra) (James Roche Remix).mp3": [],
     "/musiques/musics/Cuebrick/Cuebrick - Save Me.mp3": [

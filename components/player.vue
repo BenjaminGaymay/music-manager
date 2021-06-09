@@ -37,6 +37,7 @@
 			<div class="progress-container" @click="setProgression">
 				<v-sheet
 					class="progress"
+					rounded
 					v-bind:style="{ width: progression + '%', backgroundColor: getColors[0] }"
 				></v-sheet>
 			</div>
