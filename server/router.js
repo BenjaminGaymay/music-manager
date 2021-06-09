@@ -28,7 +28,7 @@ const listMusics = directory => {
 				title: e.match(/^.+ - (.+)\.mp3$/)[1],
 				timestamp: fs.statSync(`${directory}/${v}/${e}`).mtime.getTime(),
 				date: formatter.format(new Date(fs.statSync(`${directory}/${v}/${e}`).mtime.getTime())),
-				tags: tags[`/musiques/musics/${v}/${e}`] || []
+				tags: [...new Set(tags[`/musiques/musics/${v}/${e}`])] || []
 			}));
 		} catch (e) {}
 
