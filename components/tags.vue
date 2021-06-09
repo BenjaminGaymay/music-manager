@@ -1,5 +1,4 @@
 <template>
-<no-ssr>
 	<v-combobox
 		:style="{ maxWidth: '600px', minWidth: '300px', width: '100%' }"
 		class="mx-auto mt-4"
@@ -24,7 +23,6 @@
 			</v-chip>
 		</template>
 	</v-combobox>
-</no-ssr>
 </template>
 
 <script>
@@ -37,7 +35,7 @@ export default {
 
 	async fetch() {
 		this.items = await this.$axios.$get('/availableTags');
-		console.log(this.items)
+		console.log(this.items);
 	},
 
 	computed: {
