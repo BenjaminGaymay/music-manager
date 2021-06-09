@@ -55,6 +55,8 @@ export default {
 
 	methods: {
 		backgroundAndColors(music) {
+			if (!music) return;
+
 			this.background.backgroundImage = `url('${music.blur}')`;
 
 			Vibrant.from(music.img).getPalette((err, palette) => {

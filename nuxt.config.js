@@ -14,7 +14,8 @@ module.exports = {
 		trailingSlash: false
 	},
 
-	ssr: true,
+	ssr: false,
+
 	/*
 	 ** Headers of the page
 	 */

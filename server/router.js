@@ -77,7 +77,7 @@ module.exports = () => {
 		res.json(playlist);
 	});
 
-	router.get('/tags', (req, res) => {
+	router.get('/availableTags', (req, res) => {
 		let tags = new Set([
 			'rock doux',
 			'rock/métal',
