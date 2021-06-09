@@ -35,7 +35,6 @@ export default {
 
 	async fetch() {
 		this.items = await this.$axios.$get('/availableTags');
-		console.log(this.items);
 	},
 
 	computed: {

@@ -9,7 +9,7 @@ const listMusics = directory => {
 		day: 'numeric'
 	});
 
-	const tags = JSON.parse(fs.readFileSync('tags.json', { encoding: 'utf8', flag: 'r' }));
+	const tags = JSON.parse(fs.readFileSync(`${__dirname}/../tags.json`, { encoding: 'utf8', flag: 'r' }));
 
 	return fs.readdirSync(directory).reduce((a, v) => {
 		try {
@@ -43,8 +43,10 @@ setInterval(() => {
 	for (const artist in musics) playlist.push(...musics[artist]);
 	playlist = playlist.sort((a, b) => a.timestamp - b.timestamp).reverse();
 
+	console.log('WRITE');
+
 	fs.writeFileSync(
-		'tags.json',
+		`${__dirname}/../tags.json`,
 		JSON.stringify(
 			playlist.reduce((acc, cur) => {
 				acc[cur.src.replace('%25', '%')] = cur.tags;
@@ -52,7 +54,7 @@ setInterval(() => {
 			}, {})
 		)
 	);
-}, 900000);
+}, 3000);
 
 module.exports = () => {
 	router.get('/list', (req, res) => {
@@ -104,7 +106,6 @@ module.exports = () => {
 		for (const artist in musics) {
 			for (music of musics[artist]) for (tag of music.tags) tags.add(tag);
 		}
-		// tags = tags.concat(musics[artist].reduce((acc, cur) => acc.concat(cur.tags), []));
 
 		res.json([...tags]);
 	});
