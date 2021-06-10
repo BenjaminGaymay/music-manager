@@ -78,28 +78,7 @@ module.exports = () => {
 	});
 
 	router.get('/availableTags', (req, res) => {
-		let tags = new Set([
-			'rock doux',
-			'rock/métal',
-			'dubstep',
-			'pop',
-			'électro',
-			'électro pop',
-			'électro douce',
-			'électro instrumentale',
-			'punk/rock',
-			'chill',
-			'passe-partout',
-			'coups de cœur',
-			'classique (rock)',
-			'classique (rap)',
-			'classique (pop)',
-			'classique (électro)',
-			'nightcore',
-			'rap',
-			'lo-fi',
-			'inattendu'
-		]);
+		let tags = new Set([]);
 
 		for (const artist in musics) {
 			for (music of musics[artist]) for (tag of music.tags) tags.add(tag);
@@ -122,7 +101,8 @@ module.exports = () => {
 		for (music in musics[req.body.artist]) {
 			if (musics[req.body.artist][music].src === req.body.src) {
 				musics[req.body.artist][music].tags.splice(
-					musics[req.body.artist][music].tags.indexOf(req.body.tag, 1)
+					musics[req.body.artist][music].tags.indexOf(req.body.tag),
+					1
 				);
 			}
 		}
