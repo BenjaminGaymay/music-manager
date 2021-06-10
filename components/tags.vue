@@ -11,7 +11,7 @@
 	>
 		<template v-slot:selection="data">
 			<v-chip
-				:key="JSON.stringify(data.item)"
+				:key="data.item"
 				v-bind="data.attrs"
 				:input-value="data.selected"
 				:disabled="data.disabled"

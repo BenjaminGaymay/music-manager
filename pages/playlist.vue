@@ -1,23 +1,23 @@
 <template>
 	<v-layout column justify-center align-center>
-		<quicklist class="list" />
 		<player class="player" />
-		<tags />
+		<setPlaylist />
+		<list class="list" :tags="true" />
 	</v-layout>
 </template>
 
 <script>
-import quicklist from '~/components/quicklist.vue';
+import list from '~/components/list.vue';
 import player from '~/components/player.vue';
-import tags from '~/components/tags.vue';
+import setPlaylist from '~/components/setPlaylist.vue';
 
 import { mapGetters } from 'vuex';
 
 export default {
 	components: {
-		quicklist,
+		list,
 		player,
-		tags
+		setPlaylist
 	},
 
 	head() {

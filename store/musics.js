@@ -1,4 +1,4 @@
-export const state = () => ({ playlist: [], index: 0, music: null, playing: false });
+export const state = () => ({ playlist: [], index: 0, music: null, playing: false, tag: null });
 
 export const getters = {
 	getPlaylist: state => {
@@ -11,6 +11,10 @@ export const getters = {
 
 	getMusic: state => {
 		return state.music;
+	},
+
+	getTag: state => {
+		return state.tag;
 	},
 
 	isPlaying: state => {
@@ -39,9 +43,16 @@ export const mutations = {
 		for (const i in state.playlist) {
 			if (state.playlist[i].title === music.title && state.playlist[i].artist === music.artist) {
 				state.index = Number.parseInt(i);
-				break;
+				return;
 			}
 		}
+
+		state.index = 0;
+		state.music = state.playlist.length > 0 ? state.playlist[0] : null;
+	},
+
+	setTag(state, tag) {
+		state.tag = tag;
 	},
 
 	toggle(state, playing) {

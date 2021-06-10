@@ -10,6 +10,8 @@
 			<v-toolbar-title style="cursor: pointer" :class="tagged ? 'font-weight-bold' : ''" @click="getTagged">
 				Corrections
 			</v-toolbar-title>
+
+			<div class="pagination">{{ getIndex + 1 }} / {{ playlist.length }}</div>
 		</v-toolbar>
 	</v-card>
 </template>
@@ -41,8 +43,10 @@ export default {
 
 			this.$store.commit('musics/setPlaylist', this.playlist);
 
-			if (this.playlist.length > 0) this.$store.commit('musics/setMusic', { ...this.playlist[0], skip: true });
-			else this.$store.commit('musics/setMusic', null);
+			if (this.playlist.length > 0) {
+				this.$store.commit('musics/setMusic', { ...this.playlist[0], skip: true });
+				this.$store.commit('musics/setIndex', 0);
+			} else this.$store.commit('musics/setMusic', null);
 		},
 
 		async getUntagged() {
@@ -62,4 +66,10 @@ export default {
 };
 </script>
 
-<style scoped lang="scss"></style>
+<style scoped lang="scss">
+.pagination {
+	position: absolute;
+	left: 50%;
+	transform: translateX(-50%);
+}
+</style>

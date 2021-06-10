@@ -110,6 +110,7 @@
 import { mapGetters } from 'vuex';
 
 export default {
+	props: ['tags'],
 	data: () => ({
 		fullList: [],
 		sortMethod: null,
@@ -123,19 +124,20 @@ export default {
 	}),
 
 	async fetch() {
+		if (!this.tags) this.$store.commit('musics/setTag', null);
 		this.fullList = await this.$axios.$get('/list');
 
-		this.genPlaylist();
+		this.genPlaylist(this.getTag);
 	},
 
 	computed: {
 		...mapGetters('colors', ['getColors']),
-		...mapGetters('musics', ['getPlaylist', 'getMusic', 'getIndex', 'isPlaying'])
+		...mapGetters('musics', ['getPlaylist', 'getMusic', 'getIndex', 'getTag', 'isPlaying'])
 	},
 
 	watch: {
 		sortMethod() {
-			this.genPlaylist();
+			this.genPlaylist(this.getTag);
 
 			this.$store.commit('musics/setIndexToMusic', this.getMusic);
 
@@ -152,13 +154,13 @@ export default {
 			else if (this.sortMethod === 'date') this.selectedGroup = { group: 'date', key: this.getMusic.date };
 		},
 
+		getTag(tag) {
+			this.genPlaylist(tag);
+		},
+
 		filter(value) {
 			if (value) {
 				value = value.toLowerCase();
-				// const length = this.playlist.filter(
-				// 	e => e.title.toLowerCase().includes(value) || e.artist.toLowerCase().includes(value)
-				// ).length;
-
 				this.page = 1;
 			} else {
 				this.page = Math.ceil((this.getIndex + 1) / this.itemsPerPage);
@@ -167,7 +169,7 @@ export default {
 	},
 
 	methods: {
-		genPlaylist() {
+		genPlaylist(tag) {
 			this.playlist = [];
 
 			switch (this.sortMethod) {
@@ -192,6 +194,8 @@ export default {
 			}
 
 			this.selectedGroup = { group: this.sortMethod, key: null };
+
+			if (tag) this.playlist = this.playlist.filter(music => music.tags.includes(tag));
 
 			this.$store.commit('musics/setPlaylist', this.playlist);
 
